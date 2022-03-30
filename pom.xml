@@ -388,6 +388,11 @@ under the License.
   </contributors>
 
   <properties>
+    <!-- My SonarCloud additions -->
+    <sonar.organization>andreapepe99</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+
     <project.build.outputTimestamp>2021-07-16T09:00:00Z</project.build.outputTimestamp>
     <syncope.version>${project.version}</syncope.version>
 
