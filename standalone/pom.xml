@@ -209,6 +209,7 @@ under the License.
             <descriptor>src/assemble/standalone-zip.xml</descriptor>
           </descriptors>
         </configuration>
+        <!--
         <executions>
           <execution>
             <id>make-standalone-zip</id>
@@ -218,6 +219,7 @@ under the License.
             </goals>
           </execution>
         </executions>
+        -->
       </plugin>
       
       <plugin>
