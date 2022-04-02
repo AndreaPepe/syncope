@@ -130,11 +130,7 @@ under the License.
               <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
               <extractDir>${project.build.directory}/cargo/extract</extractDir>
             </zipUrlInstaller>
-            <!-- timeout causes failure
             <timeout>600000</timeout>
-            -->
-            <timeout>0</timeout>
-
             <log>${cargo.log}</log>
             <output>${cargo.output}</output>
 
@@ -179,11 +175,7 @@ under the License.
               <artifactId>syncope-fit-core-reference</artifactId>
               <type>war</type>
               <pingURL>https://localhost:9443/syncope/index.html</pingURL>
-              <!--
               <pingTimeout>${cargo.deployable.ping.timeout}</pingTimeout>
-              -->
-              <timeout>0</timeout>
-
               <properties>
                 <context>syncope</context>
               </properties>
