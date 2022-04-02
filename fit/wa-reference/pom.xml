@@ -133,6 +133,8 @@ under the License.
             <!-- timeout causes failure
             <timeout>600000</timeout>
             -->
+            <timeout>0</timeout>
+
             <log>${cargo.log}</log>
             <output>${cargo.output}</output>
 
@@ -180,6 +182,8 @@ under the License.
               <!--
               <pingTimeout>${cargo.deployable.ping.timeout}</pingTimeout>
               -->
+              <timeout>0</timeout>
+
               <properties>
                 <context>syncope</context>
               </properties>
