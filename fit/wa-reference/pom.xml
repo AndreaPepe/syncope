@@ -177,7 +177,9 @@ under the License.
               <artifactId>syncope-fit-core-reference</artifactId>
               <type>war</type>
               <pingURL>https://localhost:9443/syncope/index.html</pingURL>
+              <!--
               <pingTimeout>${cargo.deployable.ping.timeout}</pingTimeout>
+              -->
               <properties>
                 <context>syncope</context>
               </properties>
