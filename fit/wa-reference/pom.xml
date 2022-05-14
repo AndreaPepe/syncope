@@ -212,7 +212,8 @@ under the License.
               <goal>start</goal>
             </goals>
             <configuration>
-              <skip>${skipTests}</skip>
+              <!--<skip>${skipTests}</skip>-->
+              <skip>true</skip>
             </configuration>
           </execution>
           <execution>
@@ -222,7 +223,8 @@ under the License.
               <goal>stop</goal>
             </goals>
             <configuration>
-              <skip>${skipTests}</skip>
+              <!--<skip>${skipTests}</skip>-->
+              <skip>true</skip>
             </configuration>
           </execution>
         </executions>
