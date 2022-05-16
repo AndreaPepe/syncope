@@ -393,7 +393,7 @@ under the License.
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
     <!-- My JaCoCo additions -->
-    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/tests/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/tests-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
     <project.build.outputTimestamp>2021-07-16T09:00:00Z</project.build.outputTimestamp>
     <syncope.version>${project.version}</syncope.version>
@@ -1907,6 +1907,15 @@ under the License.
         <version>${slf4j.version}</version>
         <scope>test</scope>
       </dependency>
+
+      <!-- My JUnit additions -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.2</version>
+        <scope>test</scope>
+      </dependency>
+
     </dependencies>
 
   </dependencyManagement>
@@ -2189,11 +2198,11 @@ under the License.
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.22.2</version>
-          <configuration>
+          <!--<configuration>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
             <encoding>utf-8</encoding>
             <runOrder>alphabetical</runOrder>
-          </configuration>
+          </configuration>-->
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -2261,11 +2270,11 @@ under the License.
           <version>3.7.2</version>
         </plugin>
 
-        <plugin>
+        <!--<plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>0.8.7</version>
-        </plugin>
+        </plugin>-->
 
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
@@ -2277,30 +2286,7 @@ under the License.
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.6</version>
-
-          <configuration>
-            <dataFile>${pom.basedir}/target/jacoco.exec</dataFile>
-          </configuration>
-
-          <executions>
-            <execution>
-              <id>jacoco-init</id>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-              <configuration>
-                <destFile>${pom.basedir}/target/jacoco.exec</destFile>
-              </configuration>
-            </execution>
-            <execution>
-              <id>report</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-          </executions>
+          <version>0.8.7</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -2875,7 +2861,7 @@ under the License.
 
     <!-- My JaCoCo additions -->
     <profile>
-      <id>JaCoCo-coverage</id>
+      <id>coverage</id>
 
       <properties>
         <checkstyle.skip>true</checkstyle.skip>
