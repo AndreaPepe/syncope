@@ -393,7 +393,7 @@ under the License.
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
     <!-- My JaCoCo additions -->
-    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/tests-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.coverage.jacoco.xmlReportPaths>../tests-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
     <project.build.outputTimestamp>2021-07-16T09:00:00Z</project.build.outputTimestamp>
     <syncope.version>${project.version}</syncope.version>
