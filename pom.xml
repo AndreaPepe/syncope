@@ -391,6 +391,8 @@ under the License.
     <!-- My SonarCloud additions -->
     <sonar.organization>andreapepe99</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <!-- disable javabugs sensor because it takes too much time -->
+    <sonar.internal.analysis.dbd>false</sonar.internal.analysis.dbd>
 
     <!-- My JaCoCo additions -->
     <sonar.coverage.jacoco.xmlReportPaths>../tests-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
