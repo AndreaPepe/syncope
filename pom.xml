@@ -548,11 +548,11 @@ under the License.
     <sass.skip>false</sass.skip>
     <remote-resources.skip>true</remote-resources.skip>
 
-    <sonar.language>java</sonar.language>
-    <sonar.java.source>${targetJdk}</sonar.java.source>
-    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.junit.reportPaths>${project.build.directory}/surefire-reports</sonar.junit.reportPaths>
-    <!-- comment the following line to follow our path (additions) -->
+    <!-- comment the following lines to follow our path (additions) -->
+<!--    <sonar.language>java</sonar.language>-->
+<!--    <sonar.java.source>${targetJdk}</sonar.java.source>-->
+<!--    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>-->
+<!--    <sonar.junit.reportPaths>${project.build.directory}/surefire-reports</sonar.junit.reportPaths>-->
 <!--    <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>-->
 
     <targetJdk>11</targetJdk>
