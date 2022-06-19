@@ -2854,7 +2854,7 @@ under the License.
       <id>jdk16-plus</id>
 
       <activation>
-        <jdk>[16,)</jdk>
+        <jdk>[18,)</jdk>
       </activation>
 
       <properties>
@@ -2889,6 +2889,15 @@ under the License.
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>mutation-coverage</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+      </properties>
     </profile>
   </profiles>
 

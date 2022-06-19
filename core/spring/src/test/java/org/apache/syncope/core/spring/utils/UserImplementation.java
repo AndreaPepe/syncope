@@ -1,4 +1,4 @@
-package utils;
+package org.apache.syncope.core.spring.utils;
 
 import org.apache.syncope.common.lib.types.CipherAlgorithm;
 import org.apache.syncope.core.persistence.api.entity.*;

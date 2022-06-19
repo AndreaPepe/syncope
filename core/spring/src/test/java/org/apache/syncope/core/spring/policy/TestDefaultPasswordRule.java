@@ -1,3 +1,5 @@
+package org.apache.syncope.core.spring.policy;
+
 import org.apache.syncope.common.lib.policy.DefaultPasswordRuleConf;
 import org.apache.syncope.common.lib.types.CipherAlgorithm;
 import org.apache.syncope.core.persistence.api.entity.user.User;
@@ -7,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import utils.UserImplementation;
+import org.apache.syncope.core.spring.utils.UserImplementation;
 
 import java.util.Arrays;
 import java.util.Collection;

@@ -1,3 +1,5 @@
+package org.apache.syncope.core.spring.security;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;

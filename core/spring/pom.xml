@@ -35,6 +35,8 @@ under the License.
   
   <properties>
     <rootpom.basedir>${basedir}/../..</rootpom.basedir>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
   <dependencies>    
@@ -161,4 +163,95 @@ under the License.
       </resource>
     </resources>
   </build>
+
+  <profiles>
+    <!-- My Ba-dua additions-->
+    <!-- Configured but can not run for this project, because badua requires java8
+    while the project at least java 11 -->
+    <profile>
+      <id>ba-dua</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+        <ba-dua.version>0.7.1-SNAPSHOT</ba-dua.version>
+        <argLine>-javaagent:${project.basedir}/../../tests-coverage/badua/ba-dua-agent-rt-0.7.1-SNAPSHOT-all.jar -Doutput.file=target/badua.ser</argLine>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.5.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <phase>verify</phase>
+                <configuration>
+                  <executable>java</executable>
+                  <arguments>
+                    <argument>-jar</argument>
+                    <argument>${project.basedir}/../../tests-coverage/badua/ba-dua-cli-0.7.1-SNAPSHOT-all.jar</argument>
+                    <argument>report</argument>
+                    <argument>-input</argument>
+                    <argument>${project.build.directory}/badua.ser</argument>
+                    <argument>-classes</argument>
+                    <argument>${project.build.outputDirectory}</argument>
+                    <argument>-show-classes</argument>
+                    <argument>-show-methods</argument>
+                    <argument>-xml</argument>
+                    <argument>${project.build.directory}/badua.xml</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <!-- My PI-test mutation coverage additions -->
+    <profile>
+      <id>mutation-coverage</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-maven</artifactId>
+            <version>1.8.0</version>
+            <configuration>
+              <verbose>true</verbose>
+              <targetClasses>
+                <param>org.apache.syncope.core.spring.security.Encryptor</param>
+                <param>org.apache.syncope.core.spring.security.DefaultPasswordGenerator</param>
+                <param>org.apache.syncope.core.spring.policy.DefaultPasswordRule</param>
+              </targetClasses>
+              <targetTests>
+                <param>org.apache.syncope.core.spring.security.DefaultPasswordGeneratorTest</param>
+                <param>org.apache.syncope.core.spring.security.EncryptorTest</param>
+                <param>org.apache.syncope.core.spring.policy.TestDefaultPasswordRule</param>
+              </targetTests>
+            </configuration>
+            <executions>
+              <execution>
+                <id>Mutation Report</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>mutationCoverage</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

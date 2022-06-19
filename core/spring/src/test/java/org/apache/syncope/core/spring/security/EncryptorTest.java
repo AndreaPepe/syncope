@@ -1,7 +1,7 @@
+package org.apache.syncope.core.spring.security;
+
 import org.apache.syncope.common.lib.types.CipherAlgorithm;
 import org.apache.syncope.core.spring.ApplicationContextProvider;
-import org.apache.syncope.core.spring.security.Encryptor;
-import org.apache.syncope.core.spring.security.SecurityProperties;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
