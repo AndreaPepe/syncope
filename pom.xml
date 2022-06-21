@@ -2206,6 +2206,9 @@ under the License.
             <encoding>utf-8</encoding>
             <runOrder>alphabetical</runOrder>
           </configuration>-->
+          <configuration>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

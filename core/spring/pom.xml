@@ -230,13 +230,11 @@ under the License.
             <configuration>
               <verbose>true</verbose>
               <targetClasses>
-                <param>org.apache.syncope.core.spring.security.Encryptor</param>
                 <param>org.apache.syncope.core.spring.security.DefaultPasswordGenerator</param>
                 <param>org.apache.syncope.core.spring.policy.DefaultPasswordRule</param>
               </targetClasses>
               <targetTests>
                 <param>org.apache.syncope.core.spring.security.DefaultPasswordGeneratorTest</param>
-                <param>org.apache.syncope.core.spring.security.EncryptorTest</param>
                 <param>org.apache.syncope.core.spring.policy.TestDefaultPasswordRule</param>
               </targetTests>
             </configuration>

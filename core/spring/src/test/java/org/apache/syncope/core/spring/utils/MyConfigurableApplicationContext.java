@@ -1,4 +1,4 @@
-package org.apache.syncope.core.spring.security;
+package org.apache.syncope.core.spring.utils;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -7,6 +7,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.*;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -19,7 +20,17 @@ import java.lang.annotation.Annotation;
 import java.util.Locale;
 import java.util.Map;
 
-public class DummyConfigurableApplicationContext implements ConfigurableApplicationContext {
+public class MyConfigurableApplicationContext implements ConfigurableApplicationContext {
+
+    // method getBean() modified !
+
+    private DefaultListableBeanFactory beanFactory;
+
+    public MyConfigurableApplicationContext(DefaultListableBeanFactory beanFactory){
+        this.beanFactory = beanFactory;
+    }
+
+
     @Override
     public void setId(String id) {
 
@@ -212,7 +223,7 @@ public class DummyConfigurableApplicationContext implements ConfigurableApplicat
 
     @Override
     public Object getBean(String s) throws BeansException {
-        return null;
+        return beanFactory.getBean("securityProperties");
     }
 
     @Override
@@ -227,7 +238,7 @@ public class DummyConfigurableApplicationContext implements ConfigurableApplicat
 
     @Override
     public <T> T getBean(Class<T> aClass) throws BeansException {
-        return null;
+        return (T) beanFactory.getBean("securityProperties");
     }
 
     @Override

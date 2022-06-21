@@ -4,7 +4,14 @@ import org.apache.syncope.common.lib.types.CipherAlgorithm;
 import org.apache.syncope.core.persistence.api.entity.*;
 import org.apache.syncope.core.persistence.api.entity.resource.ExternalResource;
 import org.apache.syncope.core.persistence.api.entity.user.*;
+import org.apache.syncope.core.spring.security.Encryptor;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -13,6 +20,7 @@ import java.util.Optional;
 public class UserImplementation implements User {
 
     private String username;
+    private String password;
     private String clearPassword;
     private CipherAlgorithm cipherAlgorithm;
 
@@ -20,6 +28,12 @@ public class UserImplementation implements User {
         this.username = username;
         this.clearPassword = clearPassword;
         this.cipherAlgorithm = cipherAlgorithm;
+        try {
+            this.password = Encryptor.getInstance().encode(clearPassword, cipherAlgorithm);
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException |
+                InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -239,8 +253,8 @@ public class UserImplementation implements User {
 
     @Override
     public String getPassword() {
-        // not encoded
-        return this.getClearPassword();
+        // encoded password
+        return password;
     }
 
     @Override

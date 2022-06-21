@@ -3,13 +3,11 @@ package org.apache.syncope.core.spring.policy;
 import org.apache.syncope.common.lib.policy.DefaultPasswordRuleConf;
 import org.apache.syncope.common.lib.types.CipherAlgorithm;
 import org.apache.syncope.core.persistence.api.entity.user.User;
-import org.apache.syncope.core.spring.policy.DefaultPasswordRule;
-import org.apache.syncope.core.spring.policy.PasswordPolicyException;
+import org.apache.syncope.core.spring.utils.UserImplementation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.apache.syncope.core.spring.utils.UserImplementation;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,9 +37,10 @@ public class TestDefaultPasswordRule {
     @Parameterized.Parameters
     public static Collection<Object[]> parameters(){
         return Arrays.asList(new Object[][]{
-           // parameters of the test
-                {setUpRulesConf(-1,20,false,false), "user", "pwd", CipherAlgorithm.AES},
-                {setUpRulesConf(1,2,true, true), "admin", "bc2", CipherAlgorithm.BCRYPT}
+                // parameters of the test
+                // CONFIGURATION                                                               USER
+                {setUpRulesConf(0,20,false,false), "user", "pwd", CipherAlgorithm.AES},
+                {setUpRulesConf(10,8,true, true), "admin", "bc", CipherAlgorithm.BCRYPT}
         });
     }
 
