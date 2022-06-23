@@ -3,11 +3,14 @@ package org.apache.syncope.core.spring.security;
 import org.apache.syncope.common.lib.policy.DefaultPasswordRuleConf;
 import org.apache.syncope.common.lib.types.ImplementationEngine;
 import org.apache.syncope.core.persistence.api.dao.PasswordRule;
+import org.apache.syncope.core.persistence.api.entity.Implementation;
 import org.apache.syncope.core.persistence.api.entity.policy.PasswordPolicy;
+import org.apache.syncope.core.persistence.api.entity.resource.ExternalResource;
 import org.apache.syncope.core.provisioning.api.serialization.POJOHelper;
 import org.apache.syncope.core.spring.ImplementationManager;
 import org.apache.syncope.core.spring.policy.DefaultPasswordRule;
 import org.apache.syncope.core.spring.policy.InvalidPasswordRuleConf;
+import org.apache.syncope.core.spring.utils.MyExternalResource;
 import org.apache.syncope.core.spring.utils.MyImplementation;
 import org.apache.syncope.core.spring.utils.MyPasswordPolicy;
 import org.junit.After;
@@ -31,6 +34,7 @@ public class DefaultPasswordGeneratorTest {
     // instance under test
     private DefaultPasswordGenerator defaultPasswordGenerator;
     private List<PasswordPolicy> policies;
+    private ExternalResource externalResource;
 
     // not purely test parameters, but needed to mock correctly and to compute expected result
     private List<MyImplementation> implementations;
@@ -50,6 +54,14 @@ public class DefaultPasswordGeneratorTest {
 
         this.implementations = implementations;
         this.rules = rules;
+
+        // configure ExternalResource
+        if (policies == null || policies.isEmpty()) {
+            this.externalResource = new MyExternalResource(null);
+        } else {
+            // get the first policy; in effect, we always have one, but we could have more
+            this.externalResource = new MyExternalResource(policies.get(0));
+        }
     }
 
 
@@ -141,6 +153,7 @@ public class DefaultPasswordGeneratorTest {
                 {sizeBothNeg.getPolicies(), sizeBothNeg.getImplementations(), sizeBothNeg.getRules()},
                 {onlyMaxLenNeg.getPolicies(), onlyMaxLenNeg.getImplementations(), onlyMaxLenNeg.getRules()},
                 {bothZero.getPolicies(), bothZero.getImplementations(), bothZero.getRules()},
+                // BUG
 //                {onlyMaxSizeZero.getPolicies(), onlyMaxSizeZero.getImplementations(), onlyMaxSizeZero.getRules()},
                 {bothTen.getPolicies(), bothTen.getImplementations(), bothTen.getRules()},
 
@@ -148,18 +161,23 @@ public class DefaultPasswordGeneratorTest {
                 {startAndNotWithDigit.getPolicies(), startAndNotWithDigit.getImplementations(), startAndNotWithDigit.getRules()},
                 {startAndNotWithNonAlpha.getPolicies(), startAndNotWithNonAlpha.getImplementations(), startAndNotWithNonAlpha.getRules()},
                 {startAndNotWithAlpha.getPolicies(), startAndNotWithAlpha.getImplementations(), startAndNotWithAlpha.getRules()},
+                //BUG
 //                {endAndNotWithDigit.getPolicies(), endAndNotWithDigit.getImplementations(), endAndNotWithDigit.getRules()},
                 {endAndNotWithNonAlpha.getPolicies(), endAndNotWithNonAlpha.getImplementations(), endAndNotWithNonAlpha.getRules()},
                 {endAndNotWithAlpha.getPolicies(), endAndNotWithAlpha.getImplementations(), endAndNotWithAlpha.getRules()},
                 {startWithDigitAndNonAlpha.getPolicies(), startWithDigitAndNonAlpha.getImplementations(), startWithDigitAndNonAlpha.getRules()},
                 {startWithDigitAndAlpha.getPolicies(), startWithDigitAndAlpha.getImplementations(), startWithDigitAndAlpha.getRules()},
+                //BUG
 //                {startWithAlphaAndNonAlpha.getPolicies(), startWithAlphaAndNonAlpha.getImplementations(), startWithAlphaAndNonAlpha.getRules()},
                 {startWithAll.getPolicies(), startWithAll.getImplementations(), startWithAll.getRules()},
                 {endWithDigitAndNonAlpha.getPolicies(), endWithDigitAndNonAlpha.getImplementations(), endWithDigitAndNonAlpha.getRules()},
                 {endWithDigitAndAlpha.getPolicies(), endWithDigitAndAlpha.getImplementations(), endWithDigitAndAlpha.getRules()},
+                // BUG
 //                {endWithAlphaAndNonAlpha.getPolicies(), endWithAlphaAndNonAlpha.getImplementations(), endWithAlphaAndNonAlpha.getRules()},
                 {endWithAll.getPolicies(), endWithAll.getImplementations(), endWithAll.getRules()},
+                // BUG
 //                {notStartWithAll.getPolicies(), notStartWithAll.getImplementations(), notStartWithAll.getRules()},
+                // BUG
 //                {notEndWithAll.getPolicies(), notEndWithAll.getImplementations(), notEndWithAll.getRules()}
         });
     }
@@ -167,6 +185,7 @@ public class DefaultPasswordGeneratorTest {
 
     /**
      * This method build the policies accordingly to the designed test cases
+     *
      * @param type type of test case
      * @return rules container
      */
@@ -183,7 +202,7 @@ public class DefaultPasswordGeneratorTest {
 
         switch (type) {
             case EMPTY:
-                return new MyRulesContainer(new ArrayList<>(), null,null);
+                return new MyRulesContainer(new ArrayList<>(), null, null);
 
             case VALID:
                 conf = generateConf(10, 10, true, true, true, true, true,
@@ -359,7 +378,7 @@ public class DefaultPasswordGeneratorTest {
 
             case NULL:
             default:
-                return new MyRulesContainer(null, null,null);
+                return new MyRulesContainer(null, null, null);
         }
 
         DefaultPasswordRule rule = new DefaultPasswordRule();
@@ -428,11 +447,11 @@ public class DefaultPasswordGeneratorTest {
     /**
      * Oracle method !!!
      * This method assumes that the configuration is well-formed and not invalid
+     *
      * @param password The password to be checked
-     * @param conf The configuration to make the check against
+     * @param conf     The configuration to make the check against
      * @return True if the password follows the configuration rules; False otherwise
      */
-    // TODO : implement this method properly
     private boolean passwordRespectsConf(String password, DefaultPasswordRuleConf conf) {
         if (conf.getMinLength() != 0 && password.length() < conf.getMinLength())
             return false;
@@ -444,15 +463,14 @@ public class DefaultPasswordGeneratorTest {
         boolean lowercaseFound = false;
         boolean uppercaseFound = false;
 
-        for (Character c : password.toCharArray()){
-            if(!Character.isLetter(c) && !Character.isDigit(c))
+        for (Character c : password.toCharArray()) {
+            if (!Character.isLetter(c) && !Character.isDigit(c))
                 nonAlphaNumericFound = true;
-            else if(Character.isDigit(c)){
+            else if (Character.isDigit(c)) {
                 // is considered alphanumeric
                 alphanumericFound = true;
                 digitFound = true;
-            }
-            else if(Character.isLetter(c)){
+            } else if (Character.isLetter(c)) {
                 alphanumericFound = true;
                 if (Character.isUpperCase(c))
                     uppercaseFound = true;
@@ -476,25 +494,25 @@ public class DefaultPasswordGeneratorTest {
         char firstChar = password.toCharArray()[0];
 
         // check must start
-        if (conf.isMustStartWithNonAlpha()){
+        if (conf.isMustStartWithNonAlpha()) {
             // both digit and special characters are contemplated
             if (Character.isLetter(firstChar))
                 return false;
         }
-        if (conf.isMustStartWithDigit()){
+        if (conf.isMustStartWithDigit()) {
             if (!Character.isDigit(firstChar))
                 return false;
         }
-        if (conf.isMustStartWithAlpha()){
+        if (conf.isMustStartWithAlpha()) {
             if (!Character.isLetter(firstChar))
                 return false;
         }
         // check must end
         if (conf.isMustEndWithNonAlpha() && Character.isLetter(lastChar))
             return false;
-        if(conf.isMustEndWithDigit() && !Character.isDigit(lastChar))
+        if (conf.isMustEndWithDigit() && !Character.isDigit(lastChar))
             return false;
-        if(conf.isMustEndWithAlpha() && !Character.isLetter(lastChar))
+        if (conf.isMustEndWithAlpha() && !Character.isLetter(lastChar))
             return false;
         // check must not start
         if (conf.isMustntStartWithNonAlpha() && !Character.isLetter(firstChar))
@@ -534,7 +552,7 @@ public class DefaultPasswordGeneratorTest {
     }
 
 
-    private DefaultPasswordRuleConf mergeConfigurations(List<DefaultPasswordRuleConf> configs){
+    private DefaultPasswordRuleConf mergeConfigurations(List<DefaultPasswordRuleConf> configs) {
         DefaultPasswordRuleConf resultingConf = new DefaultPasswordRuleConf();
         resultingConf.setMinLength(Integer.MIN_VALUE);
         resultingConf.setMaxLength(Integer.MAX_VALUE);
@@ -557,36 +575,36 @@ public class DefaultPasswordGeneratorTest {
                 resultingConf.setNonAlphanumericRequired(true);
             if (conf.isAlphanumericRequired())
                 resultingConf.setAlphanumericRequired(true);
-            if(conf.isDigitRequired())
+            if (conf.isDigitRequired())
                 resultingConf.setDigitRequired(true);
-            if(conf.isLowercaseRequired())
+            if (conf.isLowercaseRequired())
                 resultingConf.setLowercaseRequired(true);
-            if(conf.isUppercaseRequired())
+            if (conf.isUppercaseRequired())
                 resultingConf.setUppercaseRequired(true);
 
             if (conf.isMustStartWithDigit())
                 resultingConf.setMustStartWithDigit(true);
-            if(conf.isMustntStartWithDigit())
+            if (conf.isMustntStartWithDigit())
                 resultingConf.setMustntStartWithDigit(true);
-            if(conf.isMustEndWithDigit())
+            if (conf.isMustEndWithDigit())
                 resultingConf.setMustEndWithDigit(true);
-            if(conf.isMustntEndWithDigit())
+            if (conf.isMustntEndWithDigit())
                 resultingConf.setMustntEndWithDigit(true);
-            if(conf.isMustStartWithNonAlpha())
+            if (conf.isMustStartWithNonAlpha())
                 resultingConf.setMustStartWithNonAlpha(true);
-            if(conf.isMustntStartWithNonAlpha())
+            if (conf.isMustntStartWithNonAlpha())
                 resultingConf.setMustntStartWithNonAlpha(true);
-            if(conf.isMustStartWithAlpha())
+            if (conf.isMustStartWithAlpha())
                 resultingConf.setMustStartWithAlpha(true);
             if (conf.isMustntStartWithAlpha())
                 resultingConf.setMustntStartWithAlpha(true);
-            if(conf.isMustEndWithNonAlpha())
+            if (conf.isMustEndWithNonAlpha())
                 resultingConf.setMustEndWithNonAlpha(true);
-            if(conf.isMustntEndWithNonAlpha())
+            if (conf.isMustntEndWithNonAlpha())
                 resultingConf.setMustntEndWithNonAlpha(true);
-            if(conf.isMustEndWithAlpha())
+            if (conf.isMustEndWithAlpha())
                 resultingConf.setMustEndWithAlpha(true);
-            if(conf.isMustntEndWithAlpha())
+            if (conf.isMustntEndWithAlpha())
                 resultingConf.setMustntEndWithAlpha(true);
 
             resultingConf.getWordsNotPermitted().addAll(conf.getWordsNotPermitted());
@@ -605,11 +623,11 @@ public class DefaultPasswordGeneratorTest {
      *
      * @return True if the exception is expected; False otherwise.
      */
-    private boolean isExpectedException() {
+    private boolean isExpectedException(List<DefaultPasswordRule> rules) {
 
         List<DefaultPasswordRuleConf> configs = new ArrayList<>();
 
-        for (DefaultPasswordRule rule: rules){
+        for (DefaultPasswordRule rule : rules) {
             DefaultPasswordRuleConf c = (DefaultPasswordRuleConf) rule.getConf();
             configs.add(c);
         }
@@ -621,30 +639,31 @@ public class DefaultPasswordGeneratorTest {
 
     /**
      * Return true if the configuration is NOT valid. False otherwise.
+     *
      * @param conf The configuration to be checked.
      * @return True if it's invalid
      */
-    private boolean isInvalidConfiguration(DefaultPasswordRuleConf conf){
+    private boolean isInvalidConfiguration(DefaultPasswordRuleConf conf) {
         // check sizes
-        if(conf.getMinLength() < 0 || conf.getMaxLength() < 0)
+        if (conf.getMinLength() < 0 || conf.getMaxLength() < 0)
             return true;
-        if (conf.getMaxLength() != 0 && conf.getMaxLength() < conf.getMinLength()){
+        if (conf.getMaxLength() != 0 && conf.getMaxLength() < conf.getMinLength()) {
             // if maxLength is zero it means no limit set, so it's not invalid
             return true;
         }
 
         // check opposite startWith/notStartWith or endWith/notEndWith
-        if(conf.isMustStartWithDigit() && conf.isMustntStartWithDigit())
+        if (conf.isMustStartWithDigit() && conf.isMustntStartWithDigit())
             return true;
-        if(conf.isMustStartWithNonAlpha() && conf.isMustntStartWithNonAlpha())
+        if (conf.isMustStartWithNonAlpha() && conf.isMustntStartWithNonAlpha())
             return true;
-        if(conf.isMustStartWithAlpha() && conf.isMustntStartWithAlpha())
+        if (conf.isMustStartWithAlpha() && conf.isMustntStartWithAlpha())
             return true;
-        if(conf.isMustEndWithDigit() && conf.isMustntEndWithDigit())
+        if (conf.isMustEndWithDigit() && conf.isMustntEndWithDigit())
             return true;
-        if(conf.isMustEndWithNonAlpha() && conf.isMustntEndWithNonAlpha())
+        if (conf.isMustEndWithNonAlpha() && conf.isMustntEndWithNonAlpha())
             return true;
-        if(conf.isMustEndWithAlpha() && conf.isMustntEndWithAlpha())
+        if (conf.isMustEndWithAlpha() && conf.isMustntEndWithAlpha())
             return true;
 
         // check combination of them (take into account that digit and nonAlpha are compatible ->
@@ -653,7 +672,7 @@ public class DefaultPasswordGeneratorTest {
             return true;
         if (conf.isMustStartWithAlpha() && conf.isMustStartWithDigit())
             return true;
-        if(conf.isMustEndWithAlpha() && conf.isMustEndWithDigit())
+        if (conf.isMustEndWithAlpha() && conf.isMustEndWithDigit())
             return true;
         if (conf.isMustEndWithAlpha() && conf.isMustEndWithNonAlpha())
             return true;
@@ -675,7 +694,7 @@ public class DefaultPasswordGeneratorTest {
         boolean testPassed = true;
         boolean expectedException = false;
         if (rules != null)
-            expectedException = isExpectedException();
+            expectedException = isExpectedException(rules);
         try {
             // method under test
             String generatedPassword = defaultPasswordGenerator.generate(policies);
@@ -721,6 +740,56 @@ public class DefaultPasswordGeneratorTest {
     public void reMock() {
         im.reset();
     }
+
+
+    @Test
+    public void testGenerateWithExternalResource() {
+
+        boolean expectedException = false;
+        boolean testPassed = true;
+
+        DefaultPasswordGenerator generator = new DefaultPasswordGenerator();
+
+        List<DefaultPasswordRule> myRule = null;
+
+        if (this.rules != null && !this.rules.isEmpty()) {
+            myRule = new ArrayList<>();
+            myRule.add(this.rules.get(0));
+        }
+        if (myRule != null){
+            expectedException = isExpectedException(myRule);
+        }
+        try {
+            // method under test (this time with ExternalResource)
+            String generatedPassword = defaultPasswordGenerator.generate(externalResource);
+            if (myRule != null && !myRule.isEmpty()) {
+                // configuration of the rule (is always a single rule)
+                DefaultPasswordRuleConf confToTest = (DefaultPasswordRuleConf) myRule.get(0).getConf();
+                testPassed = passwordRespectsConf(generatedPassword, confToTest);
+
+            } else if (externalResource == null || externalResource.getPasswordPolicy() == null) {
+                // default configuration
+                testPassed = passwordRespectsConf(generatedPassword, new DefaultPasswordRuleConf());
+            }
+
+            // at this point, if an exception was expected, it has not been triggered
+            if (expectedException)
+                testPassed = false;
+
+        } catch (InvalidPasswordRuleConf | NegativeArraySizeException | ArrayIndexOutOfBoundsException e) {
+            testPassed = expectedException;
+        } catch (NullPointerException e) {
+            System.out.println("null");
+            // this verifies only if policies == null, but this never happens in reality, so test is passed
+            if (policies == null)
+                testPassed = true;
+            else
+                testPassed = false;
+        }
+
+        Assert.assertTrue(testPassed);
+    }
+
 
     /**
      * Enumeration to identify different test cases
