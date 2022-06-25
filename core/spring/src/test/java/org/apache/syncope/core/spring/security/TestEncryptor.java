@@ -1,17 +1,10 @@
 package org.apache.syncope.core.spring.security;
 
 import org.apache.syncope.common.lib.types.CipherAlgorithm;
-import org.apache.syncope.core.spring.ApplicationContextProvider;
-import org.apache.syncope.core.spring.utils.MyConfigurableApplicationContext;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -25,18 +18,16 @@ import java.util.Collection;
 import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
-public class TestEncryptor {
+public class TestEncryptor extends TestEncryptorBaseClass {
     private Encryptor encryptor;
     private String stringToEncode;
     private CipherAlgorithm cipherAlgorithm;
 
-    public static MockedStatic<ApplicationContextProvider> appCtxProviderMocked;
-
-    public TestEncryptor(String toBeEncoded, CipherAlgorithm cipherAlgorithm){
+    public TestEncryptor(String toBeEncoded, CipherAlgorithm cipherAlgorithm) {
         configure(toBeEncoded, cipherAlgorithm);
     }
 
-    private void configure(String stringToEncode, CipherAlgorithm cipherAlgorithm){
+    private void configure(String stringToEncode, CipherAlgorithm cipherAlgorithm) {
         // instance under test
         if (encryptor == null)
             encryptor = Encryptor.getInstance();
@@ -45,56 +36,89 @@ public class TestEncryptor {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> parameters(){
+    public static Collection<Object[]> parameters() {
+        String emptyString = "";
+        String stringSmallerThanBlock = buildString(2);
+        String stringBiggerThanBlock = buildString(129);
+
+
         return Arrays.asList(new Object[][]{
-                // for now only unidimensional
-                {"encodeMe", CipherAlgorithm.AES},
-                {"", CipherAlgorithm.BCRYPT},
                 {null, CipherAlgorithm.SHA},
-                {"aaa", CipherAlgorithm.SHA256},
-                {"aaa", CipherAlgorithm.SHA512},
-                {"aaa", CipherAlgorithm.SHA1},
-                {"aaa", CipherAlgorithm.SSHA},
-                {"aaa", CipherAlgorithm.SMD5},
-                {"aaa", CipherAlgorithm.SSHA1},
-                {"aaa", CipherAlgorithm.SSHA256},
-                {"aaa", CipherAlgorithm.SSHA512},
-                {"aaa", null}
+                {emptyString, CipherAlgorithm.SHA},
+                {stringSmallerThanBlock, CipherAlgorithm.SHA},
+                {stringBiggerThanBlock, CipherAlgorithm.SHA},
+                {null, CipherAlgorithm.SHA1},
+                {emptyString, CipherAlgorithm.SHA1},
+                {stringSmallerThanBlock, CipherAlgorithm.SHA1},
+                {stringBiggerThanBlock, CipherAlgorithm.SHA1},
+                {null, CipherAlgorithm.SHA256},
+                {emptyString, CipherAlgorithm.SHA256},
+                {stringSmallerThanBlock, CipherAlgorithm.SHA256},
+                {stringBiggerThanBlock, CipherAlgorithm.SHA256},
+                {null, CipherAlgorithm.SHA512},
+                {emptyString, CipherAlgorithm.SHA512},
+                {stringSmallerThanBlock, CipherAlgorithm.SHA512},
+                {stringBiggerThanBlock, CipherAlgorithm.SHA512},
+                {null, CipherAlgorithm.AES},
+                {emptyString, CipherAlgorithm.AES},
+                {stringSmallerThanBlock, CipherAlgorithm.AES},
+                {stringBiggerThanBlock, CipherAlgorithm.AES},
+                {null, CipherAlgorithm.SMD5},
+                {emptyString, CipherAlgorithm.SMD5},
+                {stringSmallerThanBlock, CipherAlgorithm.SMD5},
+                {stringBiggerThanBlock, CipherAlgorithm.SMD5},
+                {null, CipherAlgorithm.SSHA},
+                {emptyString, CipherAlgorithm.SSHA},
+                {stringSmallerThanBlock, CipherAlgorithm.SSHA},
+                {stringBiggerThanBlock, CipherAlgorithm.SSHA},
+                {null, CipherAlgorithm.SSHA1},
+                {emptyString, CipherAlgorithm.SSHA1},
+                {stringSmallerThanBlock, CipherAlgorithm.SSHA1},
+                {stringBiggerThanBlock, CipherAlgorithm.SSHA1},
+                {null, CipherAlgorithm.SSHA256},
+                {emptyString, CipherAlgorithm.SSHA256},
+                {stringSmallerThanBlock, CipherAlgorithm.SSHA256},
+                {stringBiggerThanBlock, CipherAlgorithm.SSHA256},
+                {null, CipherAlgorithm.SSHA512},
+                {emptyString, CipherAlgorithm.SSHA512},
+                {stringSmallerThanBlock, CipherAlgorithm.SSHA512},
+                {stringBiggerThanBlock, CipherAlgorithm.SSHA512},
+                {null, CipherAlgorithm.BCRYPT},
+                {emptyString, CipherAlgorithm.BCRYPT},
+                {stringSmallerThanBlock, CipherAlgorithm.BCRYPT},
+                {stringBiggerThanBlock, CipherAlgorithm.BCRYPT},
+                {null, null},
+                {emptyString, null},
+                {stringSmallerThanBlock, null},
+                {stringBiggerThanBlock, null}
         });
     }
 
-
-    @BeforeClass
-    public static void doMocks(){
-        DefaultListableBeanFactory customFactory = new DefaultListableBeanFactory();
-
-        // MyConfigurableApplicationContext return a bean based on this string on the method getBean() !
-        customFactory.registerSingleton("securityProperties", new SecurityProperties());
-
-        appCtxProviderMocked = Mockito.mockStatic(ApplicationContextProvider.class);
-        appCtxProviderMocked.when(ApplicationContextProvider::getBeanFactory).thenReturn(customFactory);
-        appCtxProviderMocked.when(ApplicationContextProvider::getApplicationContext).thenReturn(new MyConfigurableApplicationContext(customFactory));
+    private static String buildString(int numChars) {
+        String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < numChars; i++) {
+            builder.append(alphabet.charAt(i % alphabet.length()));
+        }
+        return builder.toString();
     }
 
     @Test
-    public void testEncode(){
-        try{
+    public void testEncode() {
+        try {
             String encoded = encryptor.encode(stringToEncode, cipherAlgorithm);
-            if (stringToEncode == null){
+            System.out.println(cipherAlgorithm + ":\t" + encoded);
+            if (stringToEncode == null) {
                 Assert.assertNull(encoded);
-            }else {
+            } else {
                 boolean success = encryptor.verify(stringToEncode, cipherAlgorithm, encoded);
+                // assuming verify() method is correct
                 Assert.assertTrue(success);
             }
-        }catch (UnsupportedEncodingException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException | BadPaddingException | InvalidKeyException e) {
+        } catch (UnsupportedEncodingException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException | BadPaddingException | InvalidKeyException e) {
+            // test fails if an exception occurs
             fail("Exception occurred, test failed");
         }
     }
 
-
-    @AfterClass
-    public static void closeCtxProvider(){
-        if (appCtxProviderMocked != null)
-            appCtxProviderMocked.close();
-    }
 }

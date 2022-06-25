@@ -231,11 +231,13 @@ under the License.
               <verbose>true</verbose>
               <targetClasses>
                 <param>org.apache.syncope.core.spring.security.DefaultPasswordGenerator</param>
-                <param>org.apache.syncope.core.spring.policy.DefaultPasswordRule</param>
+                <param>org.apache.syncope.core.spring.security.Encryptor</param>
               </targetClasses>
               <targetTests>
                 <param>org.apache.syncope.core.spring.security.DefaultPasswordGeneratorTest</param>
-                <param>org.apache.syncope.core.spring.policy.TestDefaultPasswordRule</param>
+                <param>org.apache.syncope.core.spring.security.TestEncryptor</param>
+                <param>org.apache.syncope.core.spring.security.TestEncryptorVerify</param>
+                <param>org.apache.syncope.core.spring.security.TestEncryptorDecode</param>
               </targetTests>
             </configuration>
             <executions>
